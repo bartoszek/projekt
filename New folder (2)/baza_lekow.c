@@ -1,11 +1,13 @@
-#include	<baza_lekow.h>
+#include <baza_lekow.h>
+#include <string.h>
 
 
 int sprawdz_kategorie(baza_lekow* baza_lekow,char* kategoria) //0=kategoria istnieje 1=kategoria nie istnieje
 {
 	Queue_iterator iter;
-	Queue_iterator_Int(iter,baza_lekow->kategorie);
-	while((lhs=Queue_next(iter))!=NULL){
+	Queue_iterator_Init(&iter,baza_lekow->kategorie);
+	char* lhs=NULL;
+	while((lhs=(char*)Queue_next(&iter))!=NULL){
 		if(strcmp(lhs,kategoria)==0)
 		{
 			return 0;
@@ -37,41 +39,41 @@ int porownaj_leki(lek* lhs,lek* rhs) //0=takie same, 1=ta sama nazwa - różne k
 	}
 	else if(strcmp(lhs->nazwa,rhs->nazwa)<2)
 	{
-		return 1
+		return 1;
 	}
 	else
 	{
-		return 3
+		return 3;
 	}
 }
 
-int usun_lek(baza_lekow* baza, lek lek) //usuwa wszystkie leki o danej nazwie ze wszystkiech kategorii - zwraca ilość usuniętych leków.
+int usun_lek(baza_lekow* baza_lekow, lek rhs) //usuwa wszystkie leki o danej nazwie ze wszystkiech kategorii - zwraca ilość usuniętych leków.
 {
-	int retval=0
+	int retval=0;
 	Queue_iterator iter;
-	Queue_iterator_Int(iter,baza_lekow->leki);
-	void* lhs;
-	while((lhs=Queue_next(iter)!=NULL))
+	Queue_iterator_Init(&iter,baza_lekow->leki);
+	lek *lhs=NULL;
+	while((lhs=Queue_next(&iter))!=NULL)
 	{
-		if(porownaj_leki(lhs,lek)<=1)
+		if(porownaj_leki(lhs,&rhs)<=1)
 		{
-			Queue_remove(iter);
+			Queue_remove(&iter);
 			retval++;
 		}
 	}
 	return retval;
 }
 
-int dadaj_kategorie(baza_lekow* baza_lekow, char* kategoria)
+int dodaj_kategorie(baza_lekow* baza_lekow, char* kategoria)
 {
-	if(sprawdz_kategorie(kategoria)==1)
+	if(sprawdz_kategorie(baza_lekow,kategoria)==1)
 	{
 		Queue_push(baza_lekow->kategorie,kategoria);
 		return 0;
 	}
 	else
 	{
-		fprintf(stderr, "Kategoria %s już istnieje!\n",lek.kategoria);
+		fprintf(stderr, "Kategoria %s już istnieje!\n",kategoria);
 		return 1;
 	}
 }
@@ -82,13 +84,14 @@ int usun_kategorie(baza_lekow* baza_lekow,char* kategoria) //usuwa kategorie i l
 	if(sprawdz_kategorie(baza_lekow,kategoria)==0)
 	{
 		Queue_iterator iter;
-		Queue_iterator_Int(iter,baza_lekow->leki);
-		lek kategoria={"",kategoria}; //lek bez nazwy do porównywania kategorii
-		lek* tmp=NULL;
-		while((lek=Queue_next(iter))!=NULL){
-			if(porownaj_leki(lek,kategoria)==2) //ta sama kategoria
+		Queue_iterator_Init(&iter,baza_lekow->leki);
+		lek rhs={"",""}; //lek bez nazwy do porównywania kategorii
+		strcpy(rhs.kategoria,kategoria);
+		lek* lek=NULL;
+		while((lek=Queue_next(&iter))!=NULL){
+			if(porownaj_leki(lek,&rhs)==2) //ta sama kategoria
 			{
-				Queue_remove(iter);
+				Queue_remove(&iter);
 				retval++;
 			}
 		}
@@ -97,7 +100,7 @@ int usun_kategorie(baza_lekow* baza_lekow,char* kategoria) //usuwa kategorie i l
 	}
 	else
 	{
-		fprintf(stderr, "Kategoria %s nie istnieje!\n",lek.kategoria);
+		fprintf(stderr, "Kategoria %s nie istnieje!\n",kategoria);
 		return -1;
 	}
 }
@@ -108,23 +111,23 @@ int wyswietl_liste_lekow(baza_lekow* baza_lekow)
 	int liczba_lekow=baza_lekow->leki->sizeOfQueue;
 	printf("Baza Leków zawiera %d wpisów\n", liczba_lekow);
 	Queue_iterator iter;
-	Queue_iterator_Int(iter,baza_lekow->leki);
+	Queue_iterator_Init(&iter,baza_lekow->leki);
 	lek *lek=NULL;
-	while((lek=Queue_next(iter))!=NULL)
+	while((lek=Queue_next(&iter))!=NULL)
 	{
 		printf("[%2d/%2d] Nazwa Leku: %s\tKategoria Leku: %s\n",index++, liczba_lekow, lek->nazwa, lek->kategoria);
 	}
 }
 
-int wyswietl_liste_kategorii(baza_lekow*)
+int wyswietl_liste_kategorii(baza_lekow* baza_lekow)
 {
 	int index=1;
 	int liczba_kategorii=baza_lekow->kategorie->sizeOfQueue;
 	printf("Baza Leków zawiera %d kategori\n", liczba_kategorii);
 	Queue_iterator iter;
-	Queue_iterator_Int(iter,baza_lekow->leki);
+	Queue_iterator_Init(&iter,baza_lekow->leki);
 	char *kategoria=NULL;
-	while((kategoria=Queue_next(iter))!=NULL)
+	while((kategoria=Queue_next(&iter))!=NULL)
 	{
 		printf("[%2d/%2d] Nazwa Kategoria: %s\n",index++, liczba_kategorii, kategoria);
 	}
@@ -134,24 +137,24 @@ int wczytaj_baze_lekow(baza_lekow* baza_lekow,FILE *plik,FLAG flag)
 {
 	if (flag==TXT)
 	{
-		lek *lek=malloc(sizeof(lek));
-		while(fscanf(plik,"%"ROZMIAR"s\t%"ROZMIAR"%s\n",lek->nazwa,lek->kategoria)!=EOF)
+		lek lek;
+		while(fscanf(plik,"%"ROZMIAR_str"s\t%"ROZMIAR_str"%s\n",lek.nazwa,lek.kategoria)!=EOF)
 		{
-			if(sprawdz_kategorie(baza_lekow,lek->kategorie)==0)
+			if(sprawdz_kategorie(baza_lekow,lek.kategoria)==0)
 			{
-				dodaj_kategorie(baza_lekow,lek->kategorie);
+				dodaj_kategorie(baza_lekow,lek.kategoria);
 			}
 			dodaj_lek(baza_lekow,lek);			
 		}
 	}
 	else //binary
 	{
-		lek *lek=malloc(sizeof(lek));
-		while(fread(plik,sizeof(lek),lek)!=EOF)
+		lek lek;
+		while(fread(&lek,sizeof(lek),1,plik)!=EOF)
 		{
-			if(sprawdz_kategorie(baza_lekow,lek->kategorie)==0)
+			if(sprawdz_kategorie(baza_lekow,lek.kategoria)==0)
 			{
-				dodaj_kategorie(baza_lekow,lek->kategorie);
+				dodaj_kategorie(baza_lekow,lek.kategoria);
 			}
 			dodaj_lek(baza_lekow,lek);
 		}
@@ -159,40 +162,40 @@ int wczytaj_baze_lekow(baza_lekow* baza_lekow,FILE *plik,FLAG flag)
 	}
 }
 
-int zapisz_baze_lekow(baza_lekow* baza_lekow,FILE* file,FLAG falg)
+int zapisz_baze_lekow(baza_lekow* baza_lekow,FILE* plik,FLAG flag)
 {
 	Queue_iterator iter;
-	Queue_iterator_Int(iter,baza_lekow);
+	Queue_iterator_Init(&iter,baza_lekow->leki);
 	lek *lek=NULL;
 	if (flag==TXT)
 	{
-		while((lek=Queue_next(iter)!=NULL))
+		while((lek=Queue_next(&iter))!=NULL)
 		{
-			fprintf(plik,"%"ROZMIAR"s\t%"ROZMIAR"%s\n",lek->nazwa,lek->kategoria);
+			fprintf(plik,"%"ROZMIAR_str"s\t%"ROZMIAR_str"%s\n",lek->nazwa,lek->kategoria);
 		}
 	}
 	else //binary
 	{
-		while((lek=Queue_next(iter)!=NULL))
+		while((lek=Queue_next(&iter))!=NULL)
 		{
-			fwrite(plik,sizeof(lek),lek);
+			fwrite(lek,sizeof(lek),1,plik);
 		}
 	}
 }
 
 int zwolnij_baze_lekow(baza_lekow* baza_lekow)
 {
-	Queue_remove(baza_lekow->kategorie);
-	Queue_remove(baza_lekow->leki);
+	Queue_clean(baza_lekow->kategorie);
+	Queue_clean(baza_lekow->leki);
 	free(baza_lekow);
 	baza_lekow=NULL;
 }
 
 int zainicjuj_baze_lekow(baza_lekow* baza_lekow)
 {
-	baza_lekow=malloc(sizeof(baza_lekow))
+	baza_lekow=malloc(sizeof(baza_lekow));
 	baza_lekow->kategorie=malloc(sizeof(Queue));
 	baza_lekow->leki=malloc(sizeof(Queue));
-	Queue_Int(baza_lekow->kategorie,sizeof(char[ROZMIAR]));
-	Queue_Int(baza_lekow->leki,sizeof(lek));
+	Queue_Init(baza_lekow->kategorie,sizeof(char[ROZMIAR]));
+	Queue_Init(baza_lekow->leki,sizeof(lek));
 }

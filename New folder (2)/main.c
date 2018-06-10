@@ -3,20 +3,23 @@
 #include <string.h>
 #include "baza_lekow.h"
 
-#define PLIK_TXT "baza_lekow.txt"
-#define PLIK_BIN "baza_lekow.bin"
-
 
 int main()
 {
 
     baza_lekow *baza_lekow;
-    int zainicjuj_baze_lekow(baza_lekow);
+    zainicjuj_baze_lekow(baza_lekow);
 
     int opcja=0;
+    lek lek;
+    char kategoria[ROZMIAR];
+    char path[256];
+    FLAG flag;
+    FILE* file=NULL;
+                
     printf("---------- Baza lekow ----------\n");
 
-    while()
+    while(1)
     {
         printf("[1] dodaj lek\n");
         printf("[2] usuń lek\n");
@@ -32,35 +35,31 @@ int main()
 
         switch(opcja)
         {
-            case 1:
-                lek lek;
+            case 1: ;
                 printf("Nazwa leku: ");
-                scanf("%"ROZMIAR"s",lek->nazwa);
+                scanf("%"ROZMIAR_str"s",lek.nazwa);
                 printf("Kategoria leku: ");
-                scanf("%"ROZMIAR"s",lek->kategoria)
-                dodaj_lek(baza_lekow,&lek);
+                scanf("%"ROZMIAR_str"s",lek.kategoria);
+                dodaj_lek(baza_lekow,lek);
                 break;
 
-            case 2:
-                lek lek;
+            case 2: ;
                 printf("Nazwa leku: ");
-                scanf("%"ROZMIAR"s",lek->nazwa);
+                scanf("%"ROZMIAR_str"s",lek.nazwa);
                 printf("Kategoria leku: ");
-                scanf("%"ROZMIAR"s",lek->kategoria)
-                usuń_lek(baza_lekow,&lek);
+                scanf("%"ROZMIAR_str"s",lek.kategoria);
+                usun_lek(baza_lekow,lek);
                 break;
 
-            case 3:
-                char kategoria[ROZMIAR]
+            case 3: ;
                 printf("Kategoria: ");
-                scanf("%"ROZMIAR"s",kategoria)
+                scanf("%"ROZMIAR_str"s",kategoria);
                 dodaj_kategorie(baza_lekow,kategoria);
                 break;
 
             case 4:
-                char kategoria[ROZMIAR]
                 printf("Kategoria: ");
-                scanf("%"ROZMIAR"s",kategoria)
+                scanf("%"ROZMIAR_str"s",kategoria);
                 usun_kategorie(baza_lekow,kategoria);
                 break;
 
@@ -69,31 +68,45 @@ int main()
                 break;
 
             case 6:
-                char path[256];
-                FLAG falg;
                 printf("Ścieżka do pliku: ");
                 scanf("%257s",path);
-                printf("Typ pliku [1=binarny,2=textowy]")
-                scanf("%d", &flag)
+                printf("Typ pliku [1=binarny,2=textowy]");
+                scanf("%d", &flag);
                 if(flag==TXT)
-                    FILE* file=fopen(path,"r");
+                {
+                    file=fopen(path,"r");
+                }
                 else
-                    FILE* file=fopen(path,"br");
-                wczytaj_baze_lekow(baza_lekow,file,flag);
+                {
+                    file=fopen(path,"br");
+                }
+                if(file)
+                {
+                    wczytaj_baze_lekow(baza_lekow,file,flag);
+                }
+                else
+                {
+                    fprintf(stderr, "Error opening file %s\n",path );
+                }
                 break;
 
             case 7:
-                char path[256];
-                FLAG falg;
                 printf("Ścieżka do pliku: ");
                 scanf("%257s",path);
-                printf("Typ pliku [1=binarny,2=textowy]")
-                scanf("%d", &flag)
+                printf("Typ pliku [1=binarny,2=textowy]");
+                scanf("%d", &flag);
                 if(flag==TXT)
-                    FILE* file=fopen(path,"r");
+                    file=fopen(path,"r");
                 else
-                    FILE* file=fopen(path,"br");
-                zapisz_baze_lekow(baza_lekow,file,flag);
+                    file=fopen(path,"br");
+                if(file)
+                {
+                    zapisz_baze_lekow(baza_lekow,file,flag);    
+                }
+                else
+                {
+                    fprintf(stderr, "Error opening file %s\n",path );
+                }
                 break;
 
             case 0:
