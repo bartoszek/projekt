@@ -1,0 +1,33 @@
+Proszę zauważyć że do zdobycia jest 2 (specyfikacja funkcjonalna) +2(szkielet programu) + 11 (działający projekt) z nieprzekraczalnym terminami odpowiednio 28.05, 04.06 oraz 11.06.
+
+
+Zasady oceniania projektów (w sumie 15 pkt. Do zdobycia):
+1.       W ramach projektu należy wykorzystać co najmniej dwie dynamicznie alokowane listę lub drzewa binarne. Należy też wykorzystać struktury do reprezentacji danych. Proszę do tego celu zaproponować odpowiednie struktury (2 pkt. do dnia 4.06 w ramach szkieletu).
+ 
+2.       Należy przygotować co najmniej 3 oddzielne pliki (lub więcej – tutaj do decyzji studenta)(2 pkt.):
+·         Jeden plik nagłówkowy (lub więcej) z deklaracjami funkcji (rozszerzenie „.h”)
+·         jeden plik z definicjami funkcji (rozszerzenie „.c”)
+·         plik zawierający funkcję main (nazwa „main.c”)
+
+3.       Do skompilowania projektów należy przygotować dodatkowo plik Makefile pozwalający na kompilację powyższych plików komendą „make” . Więcej o pliku makefile w odnośniku:
+http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/ 
+ 
+Należy przygotować opcję pozwalającą na usunięcie plików o rozszerzeniu „.o” po wywołaniu komendy „make clean” oraz zapewnić poprawne działanie po wywołaniu komendy „make all”(2 pkt.).
+ 
+
+4.       W każdym projekcie należy zaimplementować mechanizm ustawienia odpowiedniego formatu wprowadzanych danych - np. Imię i nazwisko pracownika bez znaków specjalnych i liczb itp.  (1 pkt.)
+ 
+5.       Proszę użyć dowolnego, ale konsekwentnie przestrzeganego stylu formatowania. Za nieprzestrzeganie stylu kara do (-1 pkt.). Proszę też unikać powtarzającego się kodu – zamiast tego tworzyć funkcje do których się potem odwoływać (za nieprzestrzeganie -1 pkt.)
+ 
+6.       Każde zadanie wymaga zaimplementowania interaktywnego, konsolowego menu (-1 pkt. za brak menu)
+ 
+7.       Do projektu proszę przygotować 2 typy dokumentacji: specyfikację funkcjonalną zgodnie ze wzorcem na stronie przedmiotu (2 pkt. - oddawana do dnia 28.05 ), oraz wygenerowaną w programie doxygen (1 pkt. - oddawana podczas zdawania całego projektu). Więcej o tego typu dokumentacji pod linkiem:
+ 
+http://www.stack.nl/~dimitri/doxygen/manual/docblocks.html
+ 
+8.       Do każdego projektu należy przygotować możliwość poprawnego zapisu oraz odczytu wszystkich wprowadzonych danych w 2 formatach – tekstowym (i z użyciem funkcji fprintf/fscanf) oraz binarnym (z użyciem fputs i fgets) (2 pkt.)
+ 
+9.       W każdym projekcie należy umożliwić wprowadzanie danych, usuwanie danych, wyświetlenie wszystkich danych z możliwością posortowania. Każdy projekt zakłada, że elementy będą należeć do pewnych kategorii, dynamicznie wprowadzanych przez użytkownika. Przyjąć że aby wprowadzić dane podana kategoria musiała być już wcześniej wprowadzona do danych. Np. W bazie danych samochodów nie można wprowadzić samochodu o marce „Mercedes” jeżeli spośród dostępnych marek takiej uprzednio nie wprowadzono  Możliwe jest wprowadzenie elementów tylko o znanej, tj. istniejącej kategorii. Zaproponować i zaimplementować mechanizm wprowadzania dynamicznego kategorii i danych (3 pkt.).
+ 
+Projekty:
+1. Baza danych leków – proszę wprowadzić funkcjonalności jw. w implementacji bazy danych leków należących do kategorii wprowadzanych przez użytkownika. Lek musi zawierać nazwę oraz informację o kategorii do której należy.
