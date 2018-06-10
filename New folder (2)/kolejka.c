@@ -1,6 +1,16 @@
 #include <kolejka.h>
 
-int push(Queue *queue , void* data)
+
+void Queue_Init(Queue *queue,size_t data_size,void (*print_function)(void *))
+{
+    queue->sizeOfQueue=0;
+    queue->data_size=data_size;
+    queue->print_function=print_function;
+    queue->head=NULL;
+    queue->tail=NULL;
+}
+
+int Queue_push(Queue *queue , void* data)
 {
     node_t *newNode = malloc ( sizeof ( node_t ) ); 
     if ( temp  ==  NULL )  
@@ -27,7 +37,7 @@ int push(Queue *queue , void* data)
     return 0;
 }
 
-int remove_by_index(Queue *queue, int n) //index for 1 to queue->sizeOfQueue
+int Queue_remove_by_index(Queue *queue, int n) //index for 1 to queue->sizeOfQueue
 {
     if(n<=queue->sizeOfQueue)
     {
@@ -55,8 +65,23 @@ int remove_by_index(Queue *queue, int n) //index for 1 to queue->sizeOfQueue
         fprintf ( stderr , "index out of range in queue.remove_by_index \n " );
         return ( 1 );
     }
-
-
     return 0;
+}
+
+void Queue_print(Queue *queue)
+{
+    if(queue->sizeOfQueue==0)
+    {
+        fprintf(stderr,"Queue is empty\n");
+        return;
+    }
+    else
+    {
+        node_t to_print=queue->head;
+        for(int i=0,i<queue->sizeOfQueue;i++) //iterate for head to tail (0...sizeOfQueue-1)
+        {
+            (*queue->print_function)(to_print->data); //use function pointer on node.data
+        }
+    }
 
 }
