@@ -75,23 +75,6 @@ int Queue_remove_by_index(Queue *queue, int n) //index for 1 to queue->sizeOfQue
     return 0;
 }
 
-void* Queue_iter(Queue *queue)
-{
-    if(queue->sizeOfQueue==0)
-    {
-        fprintf(stderr,"Queue is empty\n");
-        return;
-    }
-    else
-    {
-        node_t *to_print=queue->head;
-        for(int i=0;i<queue->sizeOfQueue;i++) //iterate for head to tail (0...sizeOfQueue-1)
-        {
-            (*queue->print_function)(to_print->data); //use function pointer on node.data
-        }
-    }
-}
-
 int Queue_pop_head(Queue *queue)
 {
     int retval=Queue_remove_by_index(queue,1);
@@ -110,15 +93,23 @@ void Queue_clean(Queue *queue)
     return;
 }
 
-void Queue_iterate_Init(Queue *queue,Queue_iterator *iter)
+void Queue_iterator_Init(Queue_iterator* iter,Queue* queue)
 {
     iter->queue=queue;
     iter->current=queue->head;
+    iter->last=NULL;
 }
 
-void* Queue_iterate(Queue_itertor *iter)
+void* Queue_next(Queue_iterator *iter)
 {
     void *retval=iter->current->data;  //pointer to current->data
+    iter->last=iter->current;          //set last to current
     iter->current=iter->current->next; //move current one step forward
     return iter->current;              //return previus current data pointer
+}
+
+void Queue_remove(Queue_iterator* iter)
+{
+    iter->last->next=iter->current->next; //recoonect [last] [current] [current->next] >>> [last] [current->next]
+    free(iter->current);
 }

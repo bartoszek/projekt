@@ -14,7 +14,7 @@ kolejka.o: kolejka.c kolejka.h
 	$(CC) -c kolejka.c kolejka.h $(CFLAGS)
 
 baza_danych.o: baza_lekow.c baza_lekow.h kolejka.h
-	$(CC) -c baza_lekow.c baza_lekow.h	kolejka.h $(CFLAGS)
+	$(CC) -c baza_lekow.c baza_lekow.h kolejka.h $(CFLAGS)
 
 clean:
 	rm -f *o baza_lekow

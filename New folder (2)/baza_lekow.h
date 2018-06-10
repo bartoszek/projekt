@@ -1,34 +1,37 @@
 #include <kolejka.h>
 
-#define ROZMIAR 20
+#define ROZMIAR 20;
 typedef enum {TXT,BIN} FLAG;
 
 typedef struct _lek
 {
-	char rodzaj[ROZMIAR];
+	char kategoria[ROZMIAR];
 	char nazwa[ROZMIAR];
 }lek;
 
 typedef struct _baza_lekow
 {	
-	Queue kategorie;
-	Queue leki;
+	Queue *kategorie;
+	Queue *leki;
 }baza_lekow;
 
-dodaj_lek(baza_lekow,lek);
 
-usun_lek(baza_lekow, lek);
+int dodaj_lek(baza_lekow*,lek);
 
-dadaj_kategorie(baza_lekow, kategoria);
+int usun_lek(baza_lekow*, lek);
 
-usun_kategorie(baza_lekow, kategoria);
+int dadaj_kategorie(baza_lekow*, char*);
 
-wyswietl_liste_lekow(baza_lekow);
+int usun_kategorie(baza_lekow*, char*);
 
-wyswietl_liste_kategorii(baza_lekow);
+int wyswietl_liste_lekow(baza_lekow*);
 
-wczytaj_liste(baza_lekow,FILE,FLAG);
+int wyswietl_liste_kategorii(baza_lekow*);
 
-zapisz_liste(baza_lekow,FILE,FLAG);
+int wczytaj_baze_lekow(baza_lekow*,FILE,FLAG);
 
-zwolnij(baza_lekow);
+int zapisz_baze_lekow(baza_lekow*,FILE,FLAG);
+
+int zwolnij_baze_lekow(baza_lekow*);
+
+int zainicjuj_baze_lekow(baza_lekow*);

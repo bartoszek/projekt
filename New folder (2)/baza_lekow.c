@@ -1,125 +1,193 @@
 #include	<baza_lekow.h>
 
-dodaj_nowa_pozyjce(baza_lekow)
-{
-	Lek *nowa = NULL, *tmp, *pom;
- 	Lek.rodzaj = bufor1, Lek.nazwa = bufor2
 
-	while (*head != NULL)
-	{
-		tmp = (Lek*)malloc(sizeof(Lek));
-		tmp->dane.rodzaj = (char*)malloc(sizeof(char) * strlen((*head)->dane.rodzaj) + 1);
-		strcpy(tmp->dane.rodzaj, (*head)->dane.rodzaj);
-		tmp->dane.nazwa = (char*)malloc(sizeof(char) * strlen((*head)->dane.nazwa) + 1);
-		strcpy(tmp->dane.nazwa, (*head)->dane.nazwa);
-		tmp->next = NULL;
-		if (nowa == NULL)
-			nowa = tmp;
-		else if (strcmp(nowa->dane.rodzaj, tmp->dane.rodzaj) > 0)
+int sprawdz_kategorie(baza_lekow* baza_lekow,char* kategoria) //0=kategoria istnieje 1=kategoria nie istnieje
+{
+	Queue_iterator iter;
+	Queue_iterator_Int(iter,baza_lekow->kategorie);
+	while((lhs=Queue_next(iter))!=NULL){
+		if(strcmp(lhs,kategoria)==0)
 		{
-			tmp->next = nowa;
-			nowa = tmp;
+			return 0;
 		}
-		else
-		{
-			pom = nowa;
-			while (pom->next != NULL && strcmp(pom->next->dane.rodzaj, tmp->dane.rodzaj) < 0)
-				pom = pom->next;
-			tmp->next = pom->next;
-			pom->next = tmp;
-		}
-		pom = *head;
-		*head = (*head)->next;
-		if (pom->dane.rodzaj)
-			free(pom->dane.rodzaj);
-		if (pom->dane.nazwa)
-			free(pom->dane.nazwa);
-		free(pom);
 	}
-	*head = nowa;
+	return 1;
+}
+
+int dodaj_lek(baza_lekow* baza_lekow,lek lek)
+{
+	if(sprawdz_kategorie(baza_lekow,lek.kategoria))
+	{
+		Queue_push(baza_lekow->leki,(void*)&lek);
+	}
+	else
+	{
+		fprintf(stderr, "Kategoria %s nie istnieje, proszę ją najpierw dodać!\n",lek.kategoria);
+	}
+}
+
+int porownaj_leki(lek* lhs,lek* rhs) //0=takie same, 1=ta sama nazwa - różne kategorie, 2=te same kategorie - różne nazwy, 3=różne nazwy i kategorie.
+{
+	if(strcmp(lhs->kategoria,rhs->kategoria)==0)
+	{
+		if(strcmp(lhs->nazwa,rhs->nazwa)==0)
+			return 0;
+		else
+			return 2;
+	}
+	else if(strcmp(lhs->nazwa,rhs->nazwa)<2)
+	{
+		return 1
+	}
+	else
+	{
+		return 3
+	}
+}
+
+int usun_lek(baza_lekow* baza, lek lek) //usuwa wszystkie leki o danej nazwie ze wszystkiech kategorii - zwraca ilość usuniętych leków.
+{
+	int retval=0
+	Queue_iterator iter;
+	Queue_iterator_Int(iter,baza_lekow->leki);
+	void* lhs;
+	while((lhs=Queue_next(iter)!=NULL))
+	{
+		if(porownaj_leki(lhs,lek)<=1)
+		{
+			Queue_remove(iter);
+			retval++;
+		}
+	}
+	return retval;
+}
+
+int dadaj_kategorie(baza_lekow* baza_lekow, char* kategoria)
+{
+	if(sprawdz_kategorie(kategoria)==1)
+	{
+		Queue_push(baza_lekow->kategorie,kategoria);
 		return 0;
+	}
+	else
+	{
+		fprintf(stderr, "Kategoria %s już istnieje!\n",lek.kategoria);
+		return 1;
+	}
 }
 
-
-wyswietlanie_listy_pozycji(Lek *head)
+int usun_kategorie(baza_lekow* baza_lekow,char* kategoria) //usuwa kategorie i leki z nią związane - zwraca ilość usuniętych leków, lub -1 jeśli kategoria nie istnieje
 {
-	Lek *tmp;
- 
-	tmp = head;
-	if (tmp == NULL)
-		printf("Brak elementow");
-	else
+	int retval=0;
+	if(sprawdz_kategorie(baza_lekow,kategoria)==0)
 	{
-		while (tmp != NULL)
-		{
-			printf("%s %s\n", tmp->dane.rodzaj, tmp->dane.nazwa);
-			tmp = tmp->next;
-		}
-	}
-	return 0;
-}  
-
-void odczyt_z_pliku(Lek **head)
-{
-	FILE *wczytaj = NULL;
-	char nazwa_pliku[] = "lista_Lekow.txt";
-	char bufor[100 + 1];
-	Lek *tmp, *pom;
- 
-	wczytaj = fopen(nazwa_pliku, "r");
-	if (wczytaj == NULL)
-		printf("Blad otwarcia pliku");
-	else
-	{
-		while (fscanf(wczytaj, "%s", bufor) != EOF)
-		{
-			tmp = (Lek*)malloc(sizeof(Lek));
-			tmp->next = NULL;
-			tmp->dane.rodzaj = (char*)malloc(sizeof(char)* (strlen(bufor) + 1));
-			strcpy(tmp->dane.rodzaj, bufor);
-			fscanf(wczytaj, "%s", bufor);
-			tmp->dane.nazwa = (char*)malloc(sizeof(char)* (strlen(bufor) + 1));
-			strcpy(tmp->dane.nazwa, bufor);
- 
-			if (*head == NULL)
-				*head = tmp;
-			else
+		Queue_iterator iter;
+		Queue_iterator_Int(iter,baza_lekow->leki);
+		lek kategoria={"",kategoria}; //lek bez nazwy do porównywania kategorii
+		lek* tmp=NULL;
+		while((lek=Queue_next(iter))!=NULL){
+			if(porownaj_leki(lek,kategoria)==2) //ta sama kategoria
 			{
-				pom = *head;
-				while (pom->next != NULL)
-					pom = pom->next;
-				pom->next = tmp;
+				Queue_remove(iter);
+				retval++;
 			}
 		}
-		printf("Plik zostal wczytany");
+		fprintf(stderr, "Usunięto %d leków związanych z kategorią %s\n",retval,kategoria);
+		return retval;
 	}
-	fclose(wczytaj);
+	else
+	{
+		fprintf(stderr, "Kategoria %s nie istnieje!\n",lek.kategoria);
+		return -1;
+	}
 }
 
-zapisz_do_pliku(Lek *head)
+int wyswietl_liste_lekow(baza_lekow* baza_lekow)
 {
-	FILE *zapisz = NULL;
-	Lek *tmp;
-	char nazwa_pliku[] = "lista_pozycji.txt";
- 
-	if (head == NULL)
-		printf("Nie ma elementow do zapisania");
-	else
+	int index=1;
+	int liczba_lekow=baza_lekow->leki->sizeOfQueue;
+	printf("Baza Leków zawiera %d wpisów\n", liczba_lekow);
+	Queue_iterator iter;
+	Queue_iterator_Int(iter,baza_lekow->leki);
+	lek *lek=NULL;
+	while((lek=Queue_next(iter))!=NULL)
 	{
-		zapisz = fopen(nazwa_pliku, "w");
-		if (zapisz == NULL)
-			printf("Blad otwarcia pliku");
-		else
-		{
-			tmp = head;
-			while (tmp != NULL)
-			{
-				fprintf(zapisz, "%s\n", tmp->dane.rodzaj);
-				fprintf(zapisz, "%s\n", tmp->dane.nazwa);
-				tmp = tmp->next;
-			}
-			printf("Lista zostala zapisana");
-		}
-		fclose(zapisz);
+		printf("[%2d/%2d] Nazwa Leku: %s\tKategoria Leku: %s\n",index++, liczba_lekow, lek->nazwa, lek->kategoria);
 	}
+}
+
+int wyswietl_liste_kategorii(baza_lekow*)
+{
+	int index=1;
+	int liczba_kategorii=baza_lekow->kategorie->sizeOfQueue;
+	printf("Baza Leków zawiera %d kategori\n", liczba_kategorii);
+	Queue_iterator iter;
+	Queue_iterator_Int(iter,baza_lekow->leki);
+	char *kategoria=NULL;
+	while((kategoria=Queue_next(iter))!=NULL)
+	{
+		printf("[%2d/%2d] Nazwa Kategoria: %s\n",index++, liczba_kategorii, kategoria);
+	}
+}
+
+int wczytaj_baze_lekow(baza_lekow* baza_lekow,FILE *plik,FLAG flag)
+{
+	if (flag==TXT)
+	{
+		lek *lek=malloc(sizeof(lek));
+		while(fscanf(plik,"%"ROZMIAR"s\t%"ROZMIAR"%s\n",lek->nazwa,lek->kategoria)!=EOF)
+		{
+			if(sprawdz_kategorie(baza_lekow,lek->kategorie)==0)
+			{
+				dodaj_kategorie(baza_lekow,lek->kategorie);
+			}
+			dodaj_lek(baza_lekow,lek);			
+		}
+	}
+	else //binary
+	{
+		lek *lek=malloc(sizeof(lek));
+		while(fread(plik,sizeof(lek),lek)!=EOF)
+		{
+			if(sprawdz_kategorie(baza_lekow,lek->kategorie)==0)
+			{
+				dodaj_kategorie(baza_lekow,lek->kategorie);
+			}
+			dodaj_lek(baza_lekow,lek);
+		}
+		
+	}
+}
+
+int zapisz_baze_lekow(baza_lekow* baza_lekow,FILE* file,FLAG falg)
+{
+	Queue_iterator iter;
+	Queue_iterator_Int(iter,baza_lekow);
+	lek *lek=NULL;
+	if (flag==TXT)
+	{
+		while((lek=Queue_next(iter)!=NULL))
+		{
+			fprintf(plik,"%"ROZMIAR"s\t%"ROZMIAR"%s\n",lek->nazwa,lek->kategoria);
+		}
+	}
+	else //binary
+	{
+		while((lek=Queue_next(iter)!=NULL))
+		{
+			fwrite(plik,sizeof(lek),lek);
+		}
+	}
+}
+
+int zwolnij_baze_lekow(baza_lekow*)
+{
+	Queue_remove(baza_lekow->kategorie);
+	Queue_remove(baza_lekow->leki);
+	free(baza_lekow);
+	baza_lekow=NULL;
+}
+
+int zainicjuj_baze_lekow(baza_lekow*){
+
 }

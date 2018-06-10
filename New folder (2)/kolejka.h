@@ -18,17 +18,19 @@ typedef struct _queue
 
 typedef struct _iterator
 {
-	Queue queue;
-	int position;
+	Queue *queue;
+	node_t *last;
 	node_t *current;
 }Queue_iterator;
 
 
 void Queue_Init(Queue*,size_t);
-void Queue_iterate_Init(Queue *,Queue_iterate *)
 int Queue_push(Queue*,void*);
 int Queue_remove_by_index(Queue*,int);
-void* Queue_iterate(Queue_iterator*);
 int Queue_pop_head(Queue*);
 int Queue_pop_tail(Queue*);
 void Queue_clean(Queue*);
+
+void Queue_iterator_Init(Queue_iterator*,Queue*);
+void* Queue_next(Queue_iterator*);
+void Queue_remove(Queue_iterator*);
