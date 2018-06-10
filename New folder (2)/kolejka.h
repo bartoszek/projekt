@@ -40,7 +40,6 @@ int pop(node_t **pop_head )
 
 }
 
-void 
 void clean(node_t **clean_head)
 {
 	do

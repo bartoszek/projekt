@@ -1,4 +1,5 @@
 #include <kolejka.h>
+#include <string.h>
 
 
 void Queue_Init(Queue *queue,size_t data_size,void (*print_function)(void *))
@@ -13,7 +14,7 @@ void Queue_Init(Queue *queue,size_t data_size,void (*print_function)(void *))
 int Queue_push(Queue *queue , void* data)
 {
     node_t *newNode = malloc ( sizeof ( node_t ) ); 
-    if ( temp  ==  NULL )  
+    if ( newNode  ==  NULL )  
     { 
         fprintf(stderr ,"malloc failed in queue.push when creating new node\n"); 
         return ( 2 );
@@ -25,7 +26,7 @@ int Queue_push(Queue *queue , void* data)
         fprintf ( stderr ,  "malloc failed in queue.push when creating data for new node \n " ); 
         return ( 3 );
     }
-    memcpy(newNode->data,data,queue->data_size)
+    memcpy(newNode->data,data,queue->data_size);
     if (queue->sizeOfQueue==0){
         queue->head=queue->tail=newNode;
     }
@@ -77,8 +78,8 @@ void Queue_print(Queue *queue)
     }
     else
     {
-        node_t to_print=queue->head;
-        for(int i=0,i<queue->sizeOfQueue;i++) //iterate for head to tail (0...sizeOfQueue-1)
+        node_t *to_print=queue->head;
+        for(int i=0;i<queue->sizeOfQueue;i++) //iterate for head to tail (0...sizeOfQueue-1)
         {
             (*queue->print_function)(to_print->data); //use function pointer on node.data
         }
