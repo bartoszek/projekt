@@ -1,7 +1,7 @@
 #include <kolejka.h>
 
 #define ROZMIAR 20;
-typedef enum {TXT,BIN} FLAG;
+typedef enum {TXT=1,BIN=2} FLAG;
 
 typedef struct _lek
 {

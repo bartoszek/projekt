@@ -180,7 +180,7 @@ int zapisz_baze_lekow(baza_lekow* baza_lekow,FILE* file,FLAG falg)
 	}
 }
 
-int zwolnij_baze_lekow(baza_lekow*)
+int zwolnij_baze_lekow(baza_lekow* baza_lekow)
 {
 	Queue_remove(baza_lekow->kategorie);
 	Queue_remove(baza_lekow->leki);
@@ -188,6 +188,11 @@ int zwolnij_baze_lekow(baza_lekow*)
 	baza_lekow=NULL;
 }
 
-int zainicjuj_baze_lekow(baza_lekow*){
-
+int zainicjuj_baze_lekow(baza_lekow* baza_lekow)
+{
+	baza_lekow=malloc(sizeof(baza_lekow))
+	baza_lekow->kategorie=malloc(sizeof(Queue));
+	baza_lekow->leki=malloc(sizeof(Queue));
+	Queue_Int(baza_lekow->kategorie,sizeof(char[ROZMIAR]));
+	Queue_Int(baza_lekow->leki,sizeof(lek));
 }
