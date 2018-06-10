@@ -5,7 +5,7 @@ prefix=bin
 
 .PHONY: all
 
-all: baza_lekow
+all: main
 
 main: main.c kolejka.o baza_lekow.o kolejka.h baza_lekow.h	
 	$(CC) main.c baza_lekow.o kolejka.o baza_lekow.h kolejka.h -o baza_lekow $(CFLAGS)
@@ -20,5 +20,5 @@ clean:
 	rm -f *o baza_lekow
 
 install: baza_lekow
+	install -m 0755 -d $(prefix)
 	install -m 0755 baza_lekow $(prefix)/baza_lekow
-	install -m 0644 kategorie $(prefix)/kategorie
