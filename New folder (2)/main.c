@@ -3,29 +3,9 @@
 #include <string.h>
 #include "funkcje.h"
 
-#define PLIK_TXT "plik.txt"
-#define PLIK_BIN "plik.bin"
+#define PLIK_TXT "baza_lekow.txt"
+#define PLIK_BIN "baza_lekow.bin"
 
-#define ROZMIAR 20
-
-typedef struct Lek
-    {
-    char rodzaj[ROZMIAR];
-    char nazwa[ROZMIAR];
-    struct node * next;
-}Lek_t;
-
-dodaj_nowa_pozyjce();
-
-dodaj_nowa_pozyjce();
-
-wyswietl_liste_pozycji();
-
-wczytaj_liste_z_pliku();
-
-zapisz_liste_do_pliku();
-
-zwolnij();
 
 int main()
 {
