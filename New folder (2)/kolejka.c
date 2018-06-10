@@ -57,6 +57,6 @@ int remove_by_index(Queue *queue, int n) //index for 1 to queue->sizeOfQueue
     }
 
 
-    return retval;
+    return 0;
 
 }
