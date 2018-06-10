@@ -1,0 +1,4 @@
+all:
+	g++ main.c funkcje.c -o projekt
+clean:
+	rm -rf *o project
