@@ -34,6 +34,7 @@ int Queue_push(Queue *queue , void* data)
         queue->tail->next=newNode; // [head (next=second_node)] [second_node]... [tail (next=NULL)] >>> ... [tail(next=newNode)]                             (set newNode as next after tail)
         queue->tail=newNode; //       [head (next=second_node)] [second_node]... [tail(next=newNode)] >>> ... [second_to_last (next=newNode)] [tail=newNode] (set tail node to newNode)
     }
+    queue->sizeOfQueue++;
     return 0;
 }
 
@@ -98,18 +99,33 @@ void Queue_iterator_Init(Queue_iterator* iter,Queue* queue)
     iter->queue=queue;
     iter->current=queue->head;
     iter->last=NULL;
+    iter->second_to_last=NULL;
 }
 
 void* Queue_next(Queue_iterator *iter)
 {
+    if(iter->current==NULL)
+    {
+	fprintf(stderr, "Queue is empty\n");
+	return NULL;
+    }
     void *retval=iter->current->data;  //pointer to current->data
-    iter->last=iter->current;          //set last to current
-    iter->current=iter->current->next; //move current one step forward
-    return iter->current;              //return previus current data pointer
+    iter->second_to_last=iter->last;   //move last to second_to_last
+    iter->last=iter->current;          //move current to last
+    iter->current=iter->current->next; //move current->next to current
+    return retval;              //return previus current data pointer
 }
 
 void Queue_remove(Queue_iterator* iter)
 {
-    iter->last->next=iter->current->next; //recoonect [last] [current] [current->next] >>> [last] [current->next]
-    free(iter->current);
+    if(iter->second_to_last==NULL) // need to remove head;
+    {
+        Queue_pop_head(iter->queue);
+    }
+    else
+    {
+        iter->second_to_last->next=iter->last->next; //recoonect [second_to_last] [last] [current] >>> [last] [current]
+        iter->queue->sizeOfQueue--;
+    }
+    free(iter->last);
 }

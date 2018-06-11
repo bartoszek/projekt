@@ -2,6 +2,8 @@ CC=gcc
 CFLAGS=-I.
 prefix=bin
 
+debug: CFLAGS+= -g3 -gdwarf
+debug: all
 
 .PHONY: all
 
@@ -19,6 +21,6 @@ baza_lekow.o: baza_lekow.c baza_lekow.h kolejka.h
 clean:
 	rm -f *o baza_lekow
 
-install: baza_lekow
+install: main
 	install -m 0755 -d $(prefix)
 	install -m 0755 baza_lekow $(prefix)/baza_lekow

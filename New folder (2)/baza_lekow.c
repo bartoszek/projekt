@@ -18,7 +18,7 @@ int sprawdz_kategorie(baza_lekow* baza_lekow,char* kategoria) //0=kategoria istn
 
 int dodaj_lek(baza_lekow* baza_lekow,lek lek)
 {
-	if(sprawdz_kategorie(baza_lekow,lek.kategoria))
+	if(sprawdz_kategorie(baza_lekow,lek.kategoria)==0)
 	{
 		Queue_push(baza_lekow->leki,(void*)&lek);
 	}
@@ -96,6 +96,13 @@ int usun_kategorie(baza_lekow* baza_lekow,char* kategoria) //usuwa kategorie i l
 			}
 		}
 		fprintf(stderr, "Usunięto %d leków związanych z kategorią %s\n",retval,kategoria);
+		Queue_iterator_Init(&iter,baza_lekow->kategorie);
+		char* tmp;
+		while((tmp=Queue_next(&iter))!=NULL){
+			if(strcmp(tmp,kategoria)==0){
+                		Queue_remove(&iter);
+			}
+		}     
 		return retval;
 	}
 	else
@@ -125,7 +132,7 @@ int wyswietl_liste_kategorii(baza_lekow* baza_lekow)
 	int liczba_kategorii=baza_lekow->kategorie->sizeOfQueue;
 	printf("Baza Leków zawiera %d kategori\n", liczba_kategorii);
 	Queue_iterator iter;
-	Queue_iterator_Init(&iter,baza_lekow->leki);
+	Queue_iterator_Init(&iter,baza_lekow->kategorie);
 	char *kategoria=NULL;
 	while((kategoria=Queue_next(&iter))!=NULL)
 	{
@@ -138,7 +145,7 @@ int wczytaj_baze_lekow(baza_lekow* baza_lekow,FILE *plik,FLAG flag)
 	if (flag==TXT)
 	{
 		lek lek;
-		while(fscanf(plik,"%"ROZMIAR_str"s\t%"ROZMIAR_str"%s\n",lek.nazwa,lek.kategoria)!=EOF)
+		while(fscanf(plik,"%"ROZMIAR_str"s;%"ROZMIAR_str"%s\n",lek.nazwa,lek.kategoria)!=EOF)
 		{
 			if(sprawdz_kategorie(baza_lekow,lek.kategoria)==0)
 			{
@@ -171,7 +178,7 @@ int zapisz_baze_lekow(baza_lekow* baza_lekow,FILE* plik,FLAG flag)
 	{
 		while((lek=Queue_next(&iter))!=NULL)
 		{
-			fprintf(plik,"%"ROZMIAR_str"s\t%"ROZMIAR_str"%s\n",lek->nazwa,lek->kategoria);
+			fprintf(plik,"%"ROZMIAR_str"s;%"ROZMIAR_str"s\n",lek->nazwa,lek->kategoria);
 		}
 	}
 	else //binary
@@ -193,7 +200,7 @@ int zwolnij_baze_lekow(baza_lekow* baza_lekow)
 
 int zainicjuj_baze_lekow(baza_lekow* baza_lekow)
 {
-	baza_lekow=malloc(sizeof(baza_lekow));
+	//baza_lekow=malloc(sizeof(baza_lekow));
 	baza_lekow->kategorie=malloc(sizeof(Queue));
 	baza_lekow->leki=malloc(sizeof(Queue));
 	Queue_Init(baza_lekow->kategorie,sizeof(char[ROZMIAR]));

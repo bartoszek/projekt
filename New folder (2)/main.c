@@ -7,7 +7,7 @@
 int main()
 {
 
-    baza_lekow *baza_lekow;
+    baza_lekow *baza_lekow=malloc(sizeof(baza_lekow));
     zainicjuj_baze_lekow(baza_lekow);
 
     int opcja=0;
@@ -55,12 +55,14 @@ int main()
                 printf("Kategoria: ");
                 scanf("%"ROZMIAR_str"s",kategoria);
                 dodaj_kategorie(baza_lekow,kategoria);
+		wyswietl_liste_kategorii(baza_lekow);
                 break;
 
             case 4:
                 printf("Kategoria: ");
                 scanf("%"ROZMIAR_str"s",kategoria);
                 usun_kategorie(baza_lekow,kategoria);
+		wyswietl_liste_kategorii(baza_lekow);
                 break;
 
             case 5:
@@ -70,15 +72,15 @@ int main()
             case 6:
                 printf("Ścieżka do pliku: ");
                 scanf("%257s",path);
-                printf("Typ pliku [1=binarny,2=textowy]");
+                printf("Typ pliku [1=textowy,2=binarny]");
                 scanf("%d", &flag);
                 if(flag==TXT)
                 {
-                    file=fopen(path,"r");
+                    file=fopen(path,"rt");
                 }
                 else
                 {
-                    file=fopen(path,"br");
+                    file=fopen(path,"rb");
                 }
                 if(file)
                 {
@@ -88,17 +90,18 @@ int main()
                 {
                     fprintf(stderr, "Error opening file %s\n",path );
                 }
+		fclose(file);
                 break;
 
             case 7:
                 printf("Ścieżka do pliku: ");
                 scanf("%257s",path);
-                printf("Typ pliku [1=binarny,2=textowy]");
+                printf("Typ pliku [1=textowy,2=binarny]");
                 scanf("%d", &flag);
                 if(flag==TXT)
-                    file=fopen(path,"r");
+                    file=fopen(path,"wt");
                 else
-                    file=fopen(path,"br");
+                    file=fopen(path,"wb");
                 if(file)
                 {
                     zapisz_baze_lekow(baza_lekow,file,flag);    
@@ -107,6 +110,7 @@ int main()
                 {
                     fprintf(stderr, "Error opening file %s\n",path );
                 }
+		fclose(file);
                 break;
 
             case 0:

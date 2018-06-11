@@ -19,6 +19,7 @@ typedef struct _queue
 typedef struct _iterator
 {
 	Queue *queue;
+	node_t *second_to_last;
 	node_t *last;
 	node_t *current;
 }Queue_iterator;
