@@ -100,6 +100,7 @@ void Queue_iterator_Init(Queue_iterator* iter,Queue* queue)
     iter->current=queue->head;
     iter->last=NULL;
     iter->second_to_last=NULL;
+    iter->remove_flag=0;
 }
 
 void* Queue_next(Queue_iterator *iter)
@@ -109,11 +110,13 @@ void* Queue_next(Queue_iterator *iter)
 	fprintf(stderr, "Queue is empty\n");
 	return NULL;
     }
-    void *retval=iter->current->data;  //pointer to current->data
-    iter->second_to_last=iter->last;   //move last to second_to_last
-    iter->last=iter->current;          //move current to last
-    iter->current=iter->current->next; //move current->next to current
-    return retval;              //return previus current data pointer
+    void *retval=iter->current->data;    //pointer to current->data
+    if(iter->remove_flag==0){            //after Queue_remove, skip second_to_last update as last is pointing to element that was removed
+        iter->second_to_last=iter->last; //move last to second_to_last
+    }
+    iter->last=iter->current;            //move current to last
+    iter->current=iter->current->next;   //move current->next to current
+    return retval;                       //return previus current data pointer
 }
 
 void Queue_remove(Queue_iterator* iter)
@@ -125,7 +128,9 @@ void Queue_remove(Queue_iterator* iter)
     else
     {
         iter->second_to_last->next=iter->last->next; //recoonect [second_to_last] [last] [current] >>> [last] [current]
+	iter->remove_flag=1;                         //set remove flag for Queue_next to skip updating of [second_to_last]
         iter->queue->sizeOfQueue--;
+        free(iter->last);
+	iter->last=NULL;
     }
-    free(iter->last);
 }
